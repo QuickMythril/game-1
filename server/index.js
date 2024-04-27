@@ -29,15 +29,13 @@ io.on("connection", (socket) => {
     `User Connected: ${socket.id}, Total users: ${connectedUsers.size}`
   );
 
-  socket.on("send_message", (data) => {
-    socket.to(data.room).emit("receive_message", data);
-    console.log({ data });
-  });
+
 
 
 
   socket.on("join_game", async (data) => {
-    const roomId = data.roomId;
+    try {
+        const roomId = data.roomId;
 
     const userAddress = data.userAddress;
     const connectedSockets = io.sockets.adapter.rooms.get(roomId);
@@ -130,6 +128,9 @@ io.on("connection", (socket) => {
         }
       }, 1000);
     }
+    } catch (error) {
+        console.error(error)
+    }
   });
 
   const getSocketGameRoom = (socket) => {
@@ -141,7 +142,8 @@ io.on("connection", (socket) => {
   };
 
   socket.on("update_game", async (data) => {
-    console.log({ data });
+    try {
+        console.log({ data });
     const gameRoom = getSocketGameRoom(socket);
     const { column, row, symbol } = data.matrix;
     const user = connectedUsers.get(socket.id);
@@ -179,6 +181,9 @@ io.on("connection", (socket) => {
         delete games[roomId]
 
     }
+    } catch (error) {
+        console.error(error)
+    }
   });
 
 
@@ -188,6 +193,7 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("on_game_win", {});
   };
   socket.on("disconnect", () => {
+   try {
     const user = connectedUsers.get(socket.id);
     const roomId = user ? user.roomId : null;
     const userAddress = user ? user.userAddress : null;
@@ -205,6 +211,9 @@ io.on("connection", (socket) => {
     console.log(
       `User disconnected: ${userId}. Total users: ${connectedUsers.size}`
     );
+   } catch (error) {
+    console.error(error)
+   }
   });
 });
 
