@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require('path');
 
 const app = express();
 const http = require("http");
@@ -11,15 +12,15 @@ app.use(cors());
 const server = http.createServer(app);
 
 
-// Serve static assets in production
-if (process.env.NODE_ENV === "production") {
-    //Set static folder
-    app.use(express.static("client/dist"));
-  
-    app.get("*", (req, res) => {
-      res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
-    });
-}
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+});
+
 
 const connectedUsers = new Map();
 const games = {}; // Key: roomId, Value: GameState instance
