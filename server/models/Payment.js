@@ -7,5 +7,5 @@ const paymentSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
   });
   
-  const Payment = mongoose.model('Payment', paymentSchema);
+  module.exports = Payment = mongoose.model('Payment', paymentSchema);
   

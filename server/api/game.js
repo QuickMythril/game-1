@@ -9,7 +9,8 @@ module.exports = function (io) {
 
     router.get("/", async (req, res) => {
         try {
-    
+            const games = await Game.find()
+            console.log({games})
           res.json('hello');
         } catch (err) {
           console.error(err.message);

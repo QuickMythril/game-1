@@ -8,5 +8,5 @@ const gameSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
   });
   
-  const Game = mongoose.model('Game', gameSchema);
+  module.exports =  Game = mongoose.model('Game', gameSchema);
   

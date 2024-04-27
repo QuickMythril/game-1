@@ -5,5 +5,5 @@ const userSchema = new mongoose.Schema({
     totalWins: { type: Number, default: 0 }
   });
   
-const User = mongoose.model('User', userSchema);
+module.exports = User = mongoose.model('User', userSchema);
   
