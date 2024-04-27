@@ -27,7 +27,7 @@ const games = {}; // Key: roomId, Value: GameState instance
 
 const io = new Server(server, {
     cors: {
-      origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+      origin: "https://game-1-production.up.railway.app",
       methods: ["GET", "POST"],
     },
   });
