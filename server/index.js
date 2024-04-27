@@ -25,12 +25,7 @@ app.get('*', (req, res) => {
 const connectedUsers = new Map();
 const games = {}; // Key: roomId, Value: GameState instance
 
-const io = new Server(server, {
-    cors: {
-      origin: "https://game-1-production.up.railway.app",
-      methods: ["GET", "POST"],
-    },
-  });
+const io = new Server(server);
   
 
 io.on("connection", (socket) => {
