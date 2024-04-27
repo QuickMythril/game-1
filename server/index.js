@@ -25,8 +25,12 @@ app.get('*', (req, res) => {
 const connectedUsers = new Map();
 const games = {}; // Key: roomId, Value: GameState instance
 
+console.log('process.env.CORS_ORIGIN', process.env.CORS_ORIGIN)
 const io = new Server(server, {
-    transports: ["websocket"]
+    cors: {
+      origin: process.env.CORS_ORIGIN || "http://localhost:3001",
+      methods: ["GET", "POST"],
+    },
   });
   
 
