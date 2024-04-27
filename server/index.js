@@ -6,11 +6,29 @@ const http = require("http");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const GameState = require("./states/GameState");
+const connectDB = require("./db");
+
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+  }
+  
+connectDB()
 
 app.use(cors());
 
 const server = http.createServer(app);
 
+
+
+
+const io = new Server(server, {
+    cors: {
+      origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+      methods: ["GET", "POST"],
+    },
+  });
+  
+app.use("/api/game", require("./api/game")(io));
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../client/dist')));
@@ -26,13 +44,8 @@ const connectedUsers = new Map();
 const games = {}; // Key: roomId, Value: GameState instance
 
 console.log('process.env.CORS_ORIGIN', process.env.CORS_ORIGIN)
-const io = new Server(server, {
-    cors: {
-      origin: process.env.CORS_ORIGIN || "http://localhost:3001",
-      methods: ["GET", "POST"],
-    },
-  });
-  
+
+
 
 io.on("connection", (socket) => {
   const userId = socket.id;
