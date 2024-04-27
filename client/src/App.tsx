@@ -89,7 +89,7 @@ function App() {
   const [gameFinished, setGameFinished] = useState<any>(null)
   const connectSocket = async () => {
     const socket = await socketService
-      .connect("http://localhost:3001")
+      .connect("https://game-1-production.up.railway.app")
       .catch((err) => {
         console.log("Error: ", err);
       });
