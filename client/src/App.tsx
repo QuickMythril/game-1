@@ -77,6 +77,13 @@ async function requestUserInfo() {
   }
 }
 
+let serverUrl: string;
+if (import.meta.env.MODE === 'production') {
+    serverUrl = 'https://game-1-production.up.railway.app';
+} else {
+    serverUrl = 'http://localhost:3001';
+}
+
 
 function App() {
   const [isInRoom, setInRoom] = useState(false);
@@ -89,7 +96,7 @@ function App() {
   const [gameFinished, setGameFinished] = useState<any>(null)
   const connectSocket = async () => {
     const socket = await socketService
-      .connect("https://game-1-production.up.railway.app")
+      .connect(serverUrl)
       .catch((err) => {
         console.log("Error: ", err);
       });
