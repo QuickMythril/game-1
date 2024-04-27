@@ -25,7 +25,9 @@ app.get('*', (req, res) => {
 const connectedUsers = new Map();
 const games = {}; // Key: roomId, Value: GameState instance
 
-const io = new Server(server);
+const io = new Server(server, {
+    transports: ["websocket"]
+  });
   
 
 io.on("connection", (socket) => {
