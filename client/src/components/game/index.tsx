@@ -220,7 +220,7 @@ export function Game() {
 
   const handleGameWin = () => {
     if (socketService.socket)
-      gameService.onGameWin(socketService.socket, ({matrix, players}) => {
+      gameService.onGameWin(socketService.socket, ({matrix, players}: any) => {
         setMatrix(matrix)
         console.log("Here");
         setPlayerTurn(false);
@@ -235,7 +235,7 @@ export function Game() {
 
   const handleGameTie = () => {
     if (socketService.socket)
-      gameService.onGameTie(socketService.socket, ({matrix, players}) => {
+      gameService.onGameTie(socketService.socket, ({matrix, players}: any) => {
         setMatrix(matrix)
         setPlayerTurn(false);
         setPlayers(players)
