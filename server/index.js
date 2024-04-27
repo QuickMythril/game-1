@@ -229,7 +229,8 @@ io.on("connection", (socket) => {
   });
 });
 
+const PORT = process.env.PORT || 3001;  // Fallback to 3001 if the PORT env variable is not set
 
-server.listen(3001, () => {
+server.listen(PORT, () => {
   console.log("server is running");
 });
