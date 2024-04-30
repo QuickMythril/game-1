@@ -15,7 +15,7 @@ class GameState {
     ];
   }
 
-  addPlayer(userAddress, socketId) {
+  addPlayer(userAddress, socketId, mongoId) {
     // Add or update player in the game
    
     if (!this.players[userAddress]) {
@@ -27,7 +27,7 @@ class GameState {
            const otherSymbol = this.players[key].symbol
            symbol = otherSymbol === 'o' ? 'x': 'o'
         }
-      this.players[userAddress] = { isConnected: true, symbol, socketId };
+      this.players[userAddress] = { isConnected: true, symbol, socketId, mongoId };
     } else {
       // Handle reconnection
       //   this.players[userAddress].isConnected = true;
@@ -45,6 +45,15 @@ class GameState {
         players[player] = value
     })
     return players
+  }
+
+  getAllMongoIds(){
+    const ids = []
+    Object.keys(this.players).forEach(player => {
+        const value = structuredClone(this.players[player]);
+        ids.push(this.players[player].mongoId)
+    })
+    return ids
   }
 
   initializeBoard() {
@@ -199,6 +208,16 @@ class GameState {
         }
     })
     return otherPlayer
+  }
+
+  getWinner(){
+    let winner
+    Object.keys(this.players).forEach((user)=> {
+        if(this.players[user]?.hasWon){
+          winner = this.players[user]
+        }
+    })
+    return winner
   }
 
 
