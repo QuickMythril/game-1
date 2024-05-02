@@ -126,7 +126,8 @@ io.on("connection", (socket) => {
           await socket.join(roomId);
           connectedUsers.set(userId, { socket, roomId, userAddress });
         }
-        games[roomId].addPlayer(userAddress, socket.id, user._id.toString());
+        console.log('hex', user._id.toHexString())
+        games[roomId].addPlayer(userAddress, socket.id, user._id.toHexString());
         socket.emit("room_joined");
         const players = games[roomId].getPlayers();
 
@@ -147,6 +148,7 @@ io.on("connection", (socket) => {
             let game = await Game.findOne({ roomId });
             if (!game) {
               const mongoIds = games[roomId].getAllMongoIds();
+              console.log({mongoIds})
               if (mongoIds.length !== 2) return;
               game = new Game({
                 roomId,
@@ -203,11 +205,12 @@ io.on("connection", (socket) => {
       const user = connectedUsers.get(socket.id);
       const roomId = user ? user.roomId : null;
       const userAddress = user ? user.userAddress : null;
-      const { status, matrix, players } = games[roomId].updateGameMatrix(
+      const { status, matrix: matrixRenamed, players } = games[roomId].updateGameMatrix(
         column,
         row,
         userAddress
       );
+      const matrix = structuredClone(matrixRenamed)
       console.log({ status, matrix });
 
       const currentTurn = games[roomId].getCurrentTurnUserAddress();
@@ -239,15 +242,26 @@ io.on("connection", (socket) => {
           game.winner = game.series.scores.find(
             (s) => s.score >= totalWinsRequired
           ).player;
+          games[roomId].setGameOver()
         }
 
         await game.save(); // Save the updated game document
-        io.to(currentTurnSocketId).emit("on_game_tie", { matrix, players });
-        io.to(nonCurrentTurnSocketId).emit("on_game_tie", { matrix, players });
+        games[roomId].refreshGame()
+        const newMatrix = games[roomId].getMatrix()
+        io.to(currentTurnSocketId).emit("on_game_tie", { matrix: newMatrix, players, game  });
+        io.to(nonCurrentTurnSocketId).emit("on_game_tie", { matrix: newMatrix, players, game });
+        game[roomId].changeWhoStarted()
+        const newcurrentTurn = games[roomId].getCurrentTurnUserAddress();
+      const newcurrentTurnSocketId = games[roomId].getSocketId(newcurrentTurn);
+      const newnonCurrentTurnSocketId =
+        games[roomId].getOtherPlayerSocketId(newcurrentTurn);
+        io.to(newcurrentTurnSocketId).emit("on_turn_update", true);
+        io.to(newnonCurrentTurnSocketId).emit("on_turn_update", false);
       } else if (status === "win") {
         const winner = games[roomId].getWinner();
+        console.log({winner})
         const winnerMongoObjectId = mongoose.Types.ObjectId.createFromHexString(
-          winner.mongodId
+          winner.mongoId
         );
         const game = await Game.findOne({ roomId });
 
@@ -276,11 +290,21 @@ io.on("connection", (socket) => {
           game.winner = game.series.scores.find(
             (s) => s.score >= totalWinsRequired
           ).player;
+          games[roomId].setGameOver()
         }
 
         await game.save(); // Save the updated game document
-        io.to(currentTurnSocketId).emit("on_game_win", { matrix, players });
-        io.to(nonCurrentTurnSocketId).emit("on_game_win", { matrix, players });
+        games[roomId].refreshGame()
+        const newMatrix = games[roomId].getMatrix()
+        io.to(currentTurnSocketId).emit("on_game_win", { matrix: newMatrix, players, game });
+        io.to(nonCurrentTurnSocketId).emit("on_game_win", { matrix: newMatrix, players, game });
+        games[roomId].changeWhoStarted()
+        const newcurrentTurn = games[roomId].getCurrentTurnUserAddress();
+      const newcurrentTurnSocketId = games[roomId].getSocketId(newcurrentTurn);
+      const newnonCurrentTurnSocketId =
+        games[roomId].getOtherPlayerSocketId(newcurrentTurn);
+        io.to(newcurrentTurnSocketId).emit("on_turn_update", true);
+        io.to(newnonCurrentTurnSocketId).emit("on_turn_update", false);
       }
       if (status === "win" || status === "tie") {
         const game = await Game.findOne({ roomId });

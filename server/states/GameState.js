@@ -6,13 +6,20 @@ class GameState {
       /* player details including isConnected flags and symbols and hasWon */
     };
     this.currentTurn = "x"; // or 'o'
-    this.gameOver = false;
+    this.whoStarted = "x";
+    this.gameOver = false; // for full game ( ie best of 3)
     this.disconnectionTimer = null;
     this.matrix = [
       [null, null, null],
       [null, null, null],
       [null, null, null],
     ];
+  }
+
+  changeWhoStarted(){
+    this.whoStarted = this.whoStarted === 'x' ? 'o' : 'x';
+    this.currentTurn = this.whoStarted
+    return this.whoStarted
   }
 
   addPlayer(userAddress, socketId, mongoId) {
@@ -220,6 +227,27 @@ class GameState {
     return winner
   }
 
+  refreshGame(){
+    let players = structuredClone(this.players)
+    Object.keys(players).forEach((user)=> {
+        players[user].hasWon = false
+    })
+    this.players = players
+    this.currentTurn = "x"; // or 'o'
+
+    this.matrix = [
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+    ];
+  }
+
+  getMatrix(){
+    return this.matrix
+  }
+  setGameOver(){
+    this.gameOver = true
+  }
 
   updateGameMatrix(column, row, userAddress){
     console.log({column,row,userAddress, currentTurn: this.currentTurn})
@@ -245,7 +273,7 @@ class GameState {
             updatePlayers[player].hasWon = true
             delete updatePlayers[player].socketId
         })
-       
+        this.players = updatePlayers
         return {status: "tie" , matrix: this.matrix, players: updatePlayers}
       } else if (currentPlayerWon || otherPlayerWon) {
         const winnerUserAddress = currentPlayerWon ? userAddress : this.getOtherPlayer(userAddress);
@@ -258,6 +286,7 @@ class GameState {
             
             delete updatePlayers[player].socketId
         })
+        this.players = updatePlayers
         // gameService.gameWin(socketService.socket, "You Lost!");
         return {status: "win" , matrix: this.matrix, players: updatePlayers}
       }
