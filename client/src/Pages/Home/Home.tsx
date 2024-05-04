@@ -1,15 +1,16 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import gameContext from "../../contexts/gameContext";
 import { JoinRoom } from "../../components/JoinRoom";
+import { AppContainer } from "../../App-styles";
 import {
-  AppContainer,
   BubbleBoard,
   BubbleCard,
   BubbleCardBlue,
-  MainContainer,
-  WelcomeText,
-} from "../../App-styles";
+  MainCol,
+} from "./Home-Styles";
 import { sendRequestToExtension } from "../../App";
+import { Header } from "../../components/header/Header";
+import { CustomSlider } from "../../components/slider/CustomSlider";
 
 export const HomePage = () => {
   const { isInRoom } = useContext(gameContext);
@@ -90,10 +91,9 @@ export const HomePage = () => {
     }, 750);
   }, []);
 
-  console.log({ userInfo });
   return (
     <AppContainer>
-      <WelcomeText>Welcome to Tic-Tac-Toe</WelcomeText>
+      <Header />
       <BubbleBoard>
         {/* Row 1 */}
         <BubbleCard />
@@ -136,9 +136,10 @@ export const HomePage = () => {
         <BubbleCard />
         <BubbleCard />
       </BubbleBoard>
-      <MainContainer>
+      <MainCol>
+        <CustomSlider />
         {!isInRoom && <JoinRoom userAddress={userInfo?.address || ""} />}
-      </MainContainer>
+      </MainCol>
     </AppContainer>
   );
 };
