@@ -3,8 +3,10 @@ import "./App.css";
 import socketService from "./services/socketService";
 import GameContext, { IGameContextProps, Player } from "./contexts/gameContext";
 import { Route, Routes } from "react-router-dom";
-import { HomePage } from "./Pages/Home/Home";
-import { GamePage } from "./Pages/Game/Game";
+import { HomePage } from "./pages/Home/Home";
+import { GamePage } from "./pages/Game/Game";
+import { ThemeProvider } from "@mui/material";
+import { darkTheme } from "./styles/theme";
 
 export function sendRequestToExtension(
   requestType: string,
@@ -92,10 +94,12 @@ function App() {
 
   return (
     <GameContext.Provider value={gameContextValue}>
+      <ThemeProvider theme={darkTheme}>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/game" element={<GamePage />} />
       </Routes>
+      </ThemeProvider>
     </GameContext.Provider>
   );
 }
