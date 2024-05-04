@@ -164,7 +164,9 @@ function App() {
   }
 
   useEffect(()=> {
-    isInstalledFunc()
+    setTimeout(() => {
+      isInstalledFunc()
+    }, 750);
   }, [])
 
   console.log({userInfo})
