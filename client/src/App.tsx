@@ -63,6 +63,8 @@ function App() {
   const [isGameStarted, setGameStarted] = useState(false);
   const [players, setPlayers] = useState<Record<string, Player>>({})
   const [game, setGame] = useState<any>(null)
+  const [userInfo, setUserInfo] = useState<any>(null);
+
   const connectSocket = async () => {
     const socket = await socketService.connect(serverUrl).catch((err) => {
       console.log("Error: ", err);
@@ -90,7 +92,9 @@ function App() {
     setPlayers,
     players,
     game, 
-    setGame
+    setGame,
+    userInfo, 
+    setUserInfo
   };
 
   return (
@@ -98,7 +102,7 @@ function App() {
       <ThemeProvider theme={darkTheme}>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/game" element={<GamePage />} />
+        <Route path="/game/:id" element={<GamePage />} />
       </Routes>
       </ThemeProvider>
     </GameContext.Provider>

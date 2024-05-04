@@ -35,6 +35,9 @@ export interface IGameContextProps {
   players: Record<string, Player>;
   game: Game | null;
   setGame: (val: Game) => void;
+  userInfo: any;
+  setUserInfo: (val: any)=> void;
+
 }
 
 const defaultState: IGameContextProps = {
@@ -49,7 +52,9 @@ const defaultState: IGameContextProps = {
   players: {},
   setPlayers: ()=> {},
   game: null,
-  setGame: () => {}
+  setGame: () => {},
+  userInfo: null,
+  setUserInfo: ()=> {}
 };
 
 export default React.createContext(defaultState);

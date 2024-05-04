@@ -13,9 +13,10 @@ import { Header } from "../../components/header/Header";
 import { CustomSlider } from "../../components/slider/CustomSlider";
 
 export const HomePage = () => {
-  const { isInRoom } = useContext(gameContext);
-  const [userInfo, setUserInfo] = useState<any>(null);
+  const { isInRoom, userInfo, setUserInfo } = useContext(gameContext);
   const [isInstalled, setIsInstalled] = useState<any>(null);
+
+ 
 
   const isExtensionInstalledFunc = useCallback(async () => {
     try {
@@ -138,7 +139,6 @@ export const HomePage = () => {
       </BubbleBoard>
       <MainCol>
         <CustomSlider />
-        {!isInRoom && <JoinRoom userAddress={userInfo?.address || ""} />}
       </MainCol>
     </AppContainer>
   );

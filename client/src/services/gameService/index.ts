@@ -12,7 +12,16 @@ class GameService {
       socket.on("room_join_error", ({ error }) => rj(error));
     });
   }
-
+  public async generateGame(socket: Socket, userAddress: string): Promise<any> {
+    return new Promise((rs, rj) => {
+      socket.emit("generate_game", { userAddress });
+      socket.on("on_generate_game_response", (message) => {
+        rs(message)
+      });
+      socket.on("room_join_error", ({ error }) => rj(error));
+    });
+  }
+  
   public async updateGame(socket: Socket, gameMatrix: {
     column: number,
     row: number,
