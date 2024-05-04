@@ -70,6 +70,7 @@ export function JoinRoom(props: IJoinRoomProps) {
   const joinRoom = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('hello')
+    if(!props.userAddress) return
     const socket = socketService.socket;
     if (!roomName || roomName.trim() === "" || !socket) return;
     console.log('going trough')

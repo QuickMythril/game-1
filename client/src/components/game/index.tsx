@@ -277,6 +277,14 @@ export function Game() {
 
   console.log({isGameStarted, isPlayerTurn, game})
 
+  const GameDetails = <div>
+
+    {game?.series?.scores?.map((score)=> {
+
+      return <p>{score?.player}: {score?.score}</p>
+    })}
+  </div>
+
 
 
   if(game?.status === 'finished') return (
@@ -284,7 +292,7 @@ export function Game() {
       display: 'flex',
       flexDirection: 'column'
     }}>
-
+      {GameDetails}
       {game?.status === 'finished' && <p>The winner is ${game.winner}</p>}
     </div>
   )
@@ -301,7 +309,7 @@ export function Game() {
           <p>{val?.isConnected ? 'connected': 'disconnected'}</p>
         </div>
       })}
-    
+    {GameDetails}
     <GameContainer>
       {!isGameStarted && (
         <h2>Waiting for Other Player to Join to Start the Game!</h2>
