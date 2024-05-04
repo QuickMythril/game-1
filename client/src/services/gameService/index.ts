@@ -3,10 +3,12 @@ import { IPlayMatrix, IStartGame } from "../../components/game";
 import { Player } from "../../contexts/gameContext";
 
 class GameService {
-  public async joinGameRoom(socket: Socket, roomId: string, userAddress: string): Promise<boolean> {
+  public async joinGameRoom(socket: Socket, roomId: string, userAddress: string): Promise<any> {
     return new Promise((rs, rj) => {
       socket.emit("join_game", { roomId, userAddress });
-      socket.on("room_joined", () => rs(true));
+      socket.on("room_joined", (message) => {
+        rs(message)
+      });
       socket.on("room_join_error", ({ error }) => rj(error));
     });
   }
@@ -41,12 +43,14 @@ class GameService {
   }
 
 
-  public async onGameWin(socket: Socket, listiner: (message: string) => void) {
+  public async onGameWin(socket: Socket, listiner: (message: any) => void) {
     socket.on("on_game_win", (message) => listiner(message));
   }
-  public async onGameTie(socket: Socket, listiner: (message: string) => void) {
+  public async onGameTie(socket: Socket, listiner: (message: any) => void) {
     socket.on("on_game_tie", (message) => listiner(message));
   }
+
+  
   public async onResumeGame(socket: Socket, listiner: (data: {
     matrix: any[][];
     symbol: 'o' | 'x'

@@ -99,8 +99,8 @@ export function Game() {
     isGameStarted,
     players,
     setPlayers,
-    setGameFinished,
-    gameFinished
+    setGame,
+    game
   } = useContext(gameContext);
 
   console.log({players})
@@ -220,29 +220,37 @@ export function Game() {
 
   const handleGameWin = () => {
     if (socketService.socket)
-      gameService.onGameWin(socketService.socket, ({matrix, players}: any) => {
-        setMatrix(matrix)
+    try {
+  console.log('after')
+      gameService.onGameWin(socketService.socket, ({matrix, players, game: gameFromBack}: any) => {
+        console.log('handleGameWin')
+        console.log({game})
+        if(matrix){
+          setMatrix(matrix)
+        }
+        
         console.log("Here");
         setPlayerTurn(false);
-        setPlayers(players)
-        setGameFinished({
-          status: 'win',
-          players,
-        })
+        if(players){
+          setPlayers(players)
+        }
+        
+        setGame(gameFromBack)
         
       });
+    } catch (error) {
+      console.log({error})
+    }
+      
   };
 
   const handleGameTie = () => {
     if (socketService.socket)
-      gameService.onGameTie(socketService.socket, ({matrix, players}: any) => {
+      gameService.onGameTie(socketService.socket, ({matrix, players, game: gameFromBack}: any) => {
         setMatrix(matrix)
         setPlayerTurn(false);
         setPlayers(players)
-        setGameFinished({
-          status: 'tie',
-          players,
-        })
+        setGame(gameFromBack)
       });
   };
 
@@ -267,27 +275,17 @@ export function Game() {
     handleGameTie()
   }, []);
 
-  console.log({isGameStarted, isPlayerTurn, gameFinished})
+  console.log({isGameStarted, isPlayerTurn, game})
 
-  const gameWinner = useMemo(()=> {
-    if(!gameFinished || gameFinished?.status === 'tie') return ''
-    let winner = ''
-    Object.keys(gameFinished?.players || {}).forEach((player)=> {
-      if(gameFinished?.players[player]?.hasWon){
-        winner = player
-      }
-    })
-    return winner
-  }, [gameFinished])
 
-  if(gameFinished) return (
+
+  if(game?.status === 'finished') return (
     <div style={{
       display: 'flex',
       flexDirection: 'column'
     }}>
 
-      {gameFinished?.status === 'tie' && <p>The game has ended in a tie</p>}
-      {gameFinished?.status === 'win' && <p>The winner is ${gameWinner}</p>}
+      {game?.status === 'finished' && <p>The winner is ${game.winner}</p>}
     </div>
   )
 

@@ -6,9 +6,21 @@ export interface Player {
   symbol: 'x' | 'o';
   hasWon?: boolean;
 }
-export interface GameFinished {
-  status: 'win' | 'tie';
+export interface Game {
+  status: 'waiting' | 'active' | 'finished';
   players: Record<string, Player>;
+  winner: string;
+  series: {
+    totalGames: number; // Default to a best-of-3 series
+    scores: { player: string; score: number }[], // Track scores per player
+  };
+  roomId: string;
+  history: {
+    state: [[string]],  // 2D array representing the game's final state
+    winner: string,  // Game winner
+    startedAt: Date,
+    tie: boolean,  // Indicates if the game ended in a tie
+  }[];
 }
 export interface IGameContextProps {
   isInRoom: boolean;
@@ -21,8 +33,8 @@ export interface IGameContextProps {
   setGameStarted: (started: boolean) => void;
   setPlayers: (players: Record<string, Player>) => void;
   players: Record<string, Player>;
-  gameFinished: GameFinished | null;
-  setGameFinished: (val: GameFinished) => void;
+  game: Game | null;
+  setGame: (val: Game) => void;
 }
 
 const defaultState: IGameContextProps = {
@@ -36,8 +48,8 @@ const defaultState: IGameContextProps = {
   setGameStarted: () => {},
   players: {},
   setPlayers: ()=> {},
-  gameFinished: null,
-  setGameFinished: () => {}
+  game: null,
+  setGame: () => {}
 };
 
 export default React.createContext(defaultState);

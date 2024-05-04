@@ -56,7 +56,14 @@ io.on("connection", (socket) => {
   socket.on("join_game", async (data) => {
     try {
       const roomId = data.roomId;
-
+      let game = await Game.findOne({ roomId });
+      console.log({game})
+      if (game && game.status === 'finished') {
+        socket.emit("room_joined", {
+            game
+          });
+        return
+      }
       const userAddress = data.userAddress;
       if (!userAddress) return;
       const connectedSockets = io.sockets.adapter.rooms.get(roomId);
@@ -92,7 +99,7 @@ io.on("connection", (socket) => {
           const isInvolved = games[roomId].players[userAddress];
           if (isInvolved) {
             games[roomId].addPlayer(userAddress, socket.id);
-            socket.emit("room_joined");
+            socket.emit("room_joined", true);
             await socket.join(roomId);
             await new Promise((res) => {
               setInterval(() => {
@@ -128,7 +135,7 @@ io.on("connection", (socket) => {
         }
         console.log('hex', user._id.toHexString())
         games[roomId].addPlayer(userAddress, socket.id, user._id.toHexString());
-        socket.emit("room_joined");
+        socket.emit("room_joined", true);
         const players = games[roomId].getPlayers();
 
         console.log("getplay", players);
@@ -296,6 +303,7 @@ io.on("connection", (socket) => {
         await game.save(); // Save the updated game document
         games[roomId].refreshGame()
         const newMatrix = games[roomId].getMatrix()
+        console.log('welcome', currentTurnSocketId, nonCurrentTurnSocketId)
         io.to(currentTurnSocketId).emit("on_game_win", { matrix: newMatrix, players, game });
         io.to(nonCurrentTurnSocketId).emit("on_game_win", { matrix: newMatrix, players, game });
         games[roomId].changeWhoStarted()

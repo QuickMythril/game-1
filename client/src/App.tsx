@@ -93,7 +93,7 @@ function App() {
   const [isInstalled, setIsInstalled] = useState<any>(null)
   const [userInfo, setUserInfo] = useState<any>(null)
   const [players, setPlayers] = useState<Record<string, Player>>({})
-  const [gameFinished, setGameFinished] = useState<any>(null)
+  const [game, setGame] = useState<any>(null)
   const connectSocket = async () => {
     const socket = await socketService
       .connect(serverUrl)
@@ -122,8 +122,8 @@ function App() {
     setGameStarted,
     setPlayers,
     players,
-    gameFinished, 
-    setGameFinished
+    game, 
+    setGame
   };
 
 

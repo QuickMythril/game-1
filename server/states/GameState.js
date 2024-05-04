@@ -228,7 +228,7 @@ class GameState {
   }
 
   refreshGame(){
-    let players = structuredClone(this.players)
+    let players = this.players
     Object.keys(players).forEach((user)=> {
         players[user].hasWon = false
     })
@@ -271,7 +271,6 @@ class GameState {
         Object.keys(updatePlayers).forEach((player)=> {
 
             updatePlayers[player].hasWon = true
-            delete updatePlayers[player].socketId
         })
         this.players = updatePlayers
         return {status: "tie" , matrix: this.matrix, players: updatePlayers}
@@ -284,7 +283,6 @@ class GameState {
                 updatePlayers[player].hasWon = false
             }
             
-            delete updatePlayers[player].socketId
         })
         this.players = updatePlayers
         // gameService.gameWin(socketService.socket, "You Lost!");

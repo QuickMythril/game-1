@@ -60,7 +60,7 @@ export function JoinRoom(props: IJoinRoomProps) {
   const [roomName, setRoomName] = useState("");
   const [isJoining, setJoining] = useState(false);
 
-  const { setInRoom, isInRoom } = useContext(gameContext);
+  const { setInRoom, isInRoom , setGame} = useContext(gameContext);
 
   const handleRoomNameChange = (e: React.ChangeEvent<any>) => {
     const value = e.target.value;
@@ -80,8 +80,12 @@ export function JoinRoom(props: IJoinRoomProps) {
       .catch((err) => {
         alert(err);
       });
+    
     console.log(joined)
     if (joined) setInRoom(true);
+    if(joined?.game){
+        setGame(joined.game)
+    }
 
     setJoining(false);
   };
