@@ -1,23 +1,24 @@
 import React, { useContext, useState } from "react";
 import {
-    AppBar,
-    Button,
-    Toolbar,
-    Typography,
-    Box,
-    TextField,
-    InputLabel,
-  } from "@mui/material";
-  import { styled } from "@mui/system";
+  AppBar,
+  Button,
+  Toolbar,
+  Typography,
+  Box,
+  TextField,
+  InputLabel,
+} from "@mui/material";
+import { styled } from "@mui/system";
 import gameContext from "../../contexts/gameContext";
 import gameService from "../../services/gameService";
 import socketService from "../../services/socketService";
+import { useNavigate } from "react-router-dom";
 
 interface IJoinRoomProps {
-    userAddress: ""
+  userAddress: "";
 }
 
-const JoinRoomContainer = styled('div')`
+const JoinRoomContainer = styled("div")`
   width: 100%;
   height: 100%;
   display: flex;
@@ -27,7 +28,7 @@ const JoinRoomContainer = styled('div')`
   margin-top: 2em;
 `;
 
-const RoomIdInput = styled('input')`
+const RoomIdInput = styled("input")`
   height: 30px;
   width: 20em;
   font-size: 17px;
@@ -37,7 +38,7 @@ const RoomIdInput = styled('input')`
   padding: 0 10px;
 `;
 
-const JoinButton = styled('button')`
+const JoinButton = styled("button")`
   outline: none;
   background-color: #8e44ad;
   color: #fff;
@@ -57,6 +58,8 @@ const JoinButton = styled('button')`
 `;
 
 export function JoinRoom(props: IJoinRoomProps) {
+  const navigate = useNavigate();
+
   const [roomName, setRoomName] = useState("");
   const [isJoining, setJoining] = useState(false);
 
@@ -73,7 +76,7 @@ export function JoinRoom(props: IJoinRoomProps) {
     if(!props.userAddress) return
     const socket = socketService.socket;
     if (!roomName || roomName.trim() === "" || !socket) return;
-    console.log('going trough')
+    console.log("going trough");
     setJoining(true);
 
     const joined = await gameService
@@ -81,13 +84,15 @@ export function JoinRoom(props: IJoinRoomProps) {
       .catch((err) => {
         alert(err);
       });
-    
-    console.log(joined)
-    if (joined) setInRoom(true);
-    if(joined?.game){
+    console.log(joined);
+    if (joined) {
+      setInRoom(true);
+      if(joined?.game){
         setGame(joined.game)
     }
+      navigate('/game');
 
+    }
     setJoining(false);
   };
 
@@ -101,7 +106,7 @@ export function JoinRoom(props: IJoinRoomProps) {
           onChange={handleRoomNameChange}
         />
         <JoinButton type="submit" disabled={isJoining}>
-          {isJoining ? "Joining..." : "Joing"}
+          {isJoining ? "Joining..." : "Join"}
         </JoinButton>
       </JoinRoomContainer>
     </form>
