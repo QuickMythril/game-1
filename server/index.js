@@ -257,7 +257,7 @@ io.on("connection", (socket) => {
         const newMatrix = games[roomId].getMatrix()
         io.to(currentTurnSocketId).emit("on_game_tie", { matrix: newMatrix, players, game  });
         io.to(nonCurrentTurnSocketId).emit("on_game_tie", { matrix: newMatrix, players, game });
-        game[roomId].changeWhoStarted()
+        games[roomId].changeWhoStarted()
         const newcurrentTurn = games[roomId].getCurrentTurnUserAddress();
       const newcurrentTurnSocketId = games[roomId].getSocketId(newcurrentTurn);
       const newnonCurrentTurnSocketId =
