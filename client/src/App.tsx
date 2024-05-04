@@ -3,10 +3,11 @@ import "./App.css";
 import socketService from "./services/socketService";
 import GameContext, { IGameContextProps, Player } from "./contexts/gameContext";
 import { Route, Routes } from "react-router-dom";
-import { HomePage } from "./pages/Home/Home";
-import { GamePage } from "./pages/Game/Game";
+
 import { ThemeProvider } from "@mui/material";
 import { darkTheme } from "./styles/theme";
+import { HomePage } from "./Pages/Home/Home";
+import { GamePage } from "./Pages/Game/Game";
 
 export function sendRequestToExtension(
   requestType: string,
