@@ -186,6 +186,16 @@ export function Game() {
       });
   };
 
+  const handleFullGameData = () => {
+    if (socketService.socket)
+      gameService.onSetFullGameData(socketService.socket, (fullGameData) => {
+    console.log({fullGameData})
+        setGame(fullGameData)
+      });
+  };
+
+  
+
   const handleTurnUpdate = () => {
     if (socketService.socket)
       gameService.onTurnUpdate(socketService.socket, (isTurn) => {
@@ -273,6 +283,7 @@ export function Game() {
     handleGameResume();
     handlePlayersInfo()
     handleGameTie()
+    handleFullGameData()
   }, []);
 
   console.log({isGameStarted, isPlayerTurn, game})
@@ -281,7 +292,7 @@ export function Game() {
 
     {game?.series?.scores?.map((score)=> {
 
-      return <p>{score?.player}: {score?.score}</p>
+      return <p>{score?.player?.qortAddress}: {score?.score}</p>
     })}
   </div>
 
@@ -293,7 +304,7 @@ export function Game() {
       flexDirection: 'column'
     }}>
       {GameDetails}
-      {game?.status === 'finished' && <p>The winner is ${game.winner}</p>}
+      {game?.status === 'finished' && <p>The winner is ${game?.winner?.qortAddress}</p>}
     </div>
   )
 

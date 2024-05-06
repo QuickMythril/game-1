@@ -9,15 +9,24 @@ export interface Player {
 export interface Game {
   status: 'waiting' | 'active' | 'finished';
   players: Record<string, Player>;
-  winner: string;
+  winner: {
+    qortAddress: string;
+      _id: string;
+  }
   series: {
     totalGames: number; // Default to a best-of-3 series
-    scores: { player: string; score: number }[], // Track scores per player
+    scores: { player: {
+      qortAddress: string;
+      _id: string;
+    }; score: number }[], // Track scores per player
   };
   roomId: string;
   history: {
     state: [[string]],  // 2D array representing the game's final state
-    winner: string,  // Game winner
+    winner: {
+      qortAddress: string;
+      _id: string;
+    },  // Game winner
     startedAt: Date,
     tie: boolean,  // Indicates if the game ended in a tie
   }[];

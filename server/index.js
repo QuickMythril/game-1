@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 connectDB();
-const uid = new ShortUniqueId({ length: 12 });
+const uid = new ShortUniqueId({ length: 16 });
 
 app.use(cors());
 
@@ -44,6 +44,35 @@ const connectedUsers = new Map();
 const games = {}; // Key: roomId, Value: GameState instance
 let waitingList = [];
 console.log("process.env.CORS_ORIGIN", process.env.CORS_ORIGIN);
+
+const getFullGame = async (roomId)=> {
+    try {
+        const fullGame  = await Game.findOne({ roomId })
+        .populate({
+          path: 'players', // Populate all players
+          select: 'qortAddress' // Select only the qortAddress field from the User model
+        })
+        .populate({
+          path: 'playerPayments.player', // Populate player field within playerPayments
+          select: 'qortAddress' // Select only the qortAddress field from the User model
+        })
+        .populate({
+          path: 'history.winner', // Populate the winner in the history if available
+          select: 'qortAddress' // Select only the qortAddress field
+        })
+        .populate({
+          path: 'winner', // Populate the overall game winner if available
+          select: 'qortAddress' // Select only the qortAddress field
+        })
+        .populate({
+          path: 'series.scores.player', // Populate players within the scores of series
+          select: 'qortAddress' // Select only the qortAddress field
+        });
+        return fullGame
+    } catch (error) {
+        
+    }
+}
 
 io.on("connection", (socket) => {
   const userId = socket.id;
@@ -222,6 +251,10 @@ io.on("connection", (socket) => {
               start: symbolOther === "x" ? true : false,
               symbol: symbolOther,
             });
+
+            const fullGame  = await getFullGame(roomId)
+           
+            io.in(roomId).emit("on_set_full_game_data", fullGame);
           }
         }, 1000);
       }
@@ -285,17 +318,18 @@ io.on("connection", (socket) => {
         }
 
         await game.save(); // Save the updated game document
+        const fullGame  = await getFullGame(roomId)
         games[roomId].refreshGame();
         const newMatrix = games[roomId].getMatrix();
         io.to(currentTurnSocketId).emit("on_game_tie", {
           matrix: newMatrix,
           players,
-          game,
+          game: fullGame,
         });
         io.to(nonCurrentTurnSocketId).emit("on_game_tie", {
           matrix: newMatrix,
           players,
-          game,
+          game: fullGame,
         });
         games[roomId].changeWhoStarted();
         const newcurrentTurn = games[roomId].getCurrentTurnUserAddress();
@@ -341,17 +375,19 @@ io.on("connection", (socket) => {
         }
 
         await game.save(); // Save the updated game document
+        const fullGame  = await getFullGame(roomId)
+
         games[roomId].refreshGame();
         const newMatrix = games[roomId].getMatrix();
         io.to(currentTurnSocketId).emit("on_game_win", {
           matrix: newMatrix,
           players,
-          game,
+          game: fullGame,
         });
         io.to(nonCurrentTurnSocketId).emit("on_game_win", {
           matrix: newMatrix,
           players,
-          game,
+          game: fullGame,
         });
         games[roomId].changeWhoStarted();
         const newcurrentTurn = games[roomId].getCurrentTurnUserAddress();
@@ -363,7 +399,6 @@ io.on("connection", (socket) => {
         io.to(newnonCurrentTurnSocketId).emit("on_turn_update", false);
       }
       if (status === "win" || status === "tie") {
-        const game = await Game.findOne({ roomId });
 
         // end game ( later save to db )
         // delete games[roomId]

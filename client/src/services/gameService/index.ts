@@ -44,6 +44,13 @@ class GameService {
     socket.on("on_turn_update", ( isTurn ) => listiner(isTurn));
   }
 
+  public async onSetFullGameData(
+    socket: Socket,
+    listiner: (gameData: any) => void
+  ) {
+    socket.on("on_set_full_game_data", ( message ) => listiner(message));
+  }
+
   public async onStartGame(
     socket: Socket,
     listiner: (options: IStartGame) => void
