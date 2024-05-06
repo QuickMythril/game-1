@@ -6,8 +6,9 @@ import { Route, Routes } from "react-router-dom";
 
 import { ThemeProvider } from "@mui/material";
 import { darkTheme } from "./styles/theme";
-import { HomePage } from "./Pages/Home/Home";
-import { GamePage } from "./Pages/Game/Game";
+import { HomePage } from "./pages/Home/Home";
+import { GamePage } from "./pages/Game/Game";
+import { QonnectFour } from "./components/qonnect-four/QonnectFour";
 
 export function sendRequestToExtension(
   requestType: string,
@@ -61,8 +62,8 @@ function App() {
   const [playerSymbol, setPlayerSymbol] = useState<"x" | "o">("x");
   const [isPlayerTurn, setPlayerTurn] = useState(false);
   const [isGameStarted, setGameStarted] = useState(false);
-  const [players, setPlayers] = useState<Record<string, Player>>({})
-  const [game, setGame] = useState<any>(null)
+  const [players, setPlayers] = useState<Record<string, Player>>({});
+  const [game, setGame] = useState<any>(null);
   const [userInfo, setUserInfo] = useState<any>(null);
 
   const connectSocket = async () => {
@@ -91,19 +92,20 @@ function App() {
     setGameStarted,
     setPlayers,
     players,
-    game, 
+    game,
     setGame,
-    userInfo, 
-    setUserInfo
+    userInfo,
+    setUserInfo,
   };
 
   return (
     <GameContext.Provider value={gameContextValue}>
       <ThemeProvider theme={darkTheme}>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/game/:id" element={<GamePage />} />
-      </Routes>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/qonnect-four" element={<QonnectFour />} />
+          <Route path="/game/:id" element={<GamePage />} />
+        </Routes>
       </ThemeProvider>
     </GameContext.Provider>
   );

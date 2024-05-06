@@ -1,8 +1,8 @@
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
-import { HomeSVG } from "../icons/HomeSVG";
-import { QortalLogoSVG } from "../icons/QortalLogoSVG";
-import { CaretDownSVG } from "../icons/CaretDownSVG";
+import { HomeSVG } from "../common/icons/HomeSVG";
+import { QortalLogoSVG } from "../common/icons/QortalLogoSVG";
+import { CaretDownSVG } from "../common/icons/CaretDownSVG";
 
 export const HeaderNav = styled(Box)(({ theme }) => ({
   display: "flex",

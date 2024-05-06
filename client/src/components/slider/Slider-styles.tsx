@@ -1,6 +1,6 @@
 import { Box, Slider, Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import { DoubleCaretRightSVG } from "../icons/DoubleCaretRightSVG";
+import { DoubleCaretRightSVG } from "../common/icons/DoubleCaretRightSVG";
 
 export const StyledSlider = styled(Slider)(({ theme }) => ({
   " & .MuiSlider-thumb": {
@@ -27,7 +27,7 @@ export const SliderContainer = styled(Box)({
   alignItems: "center",
   justifyContent: "center",
   gap: "35px",
-  width: "100%",
+  width: "378px",
 });
 
 export const SliderDiv = styled(Box)({
