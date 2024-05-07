@@ -1,7 +1,7 @@
 // Qonnect Four Styles
 import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import { PieceColors } from "./QonnectFour";
+import { AnimationInfo, PieceColors } from "./QonnectFour";
 
 export const QonnectFourContainer = styled(Box)({
   display: "flex",
@@ -12,13 +12,15 @@ export const QonnectFourContainer = styled(Box)({
 });
 
 export const QonnectFourBoard = styled(Box)({
+  position: "relative",
+  zIndex: 12,
   width: "669px",
   height: "auto",
   padding: "20px",
   display: "flex",
   flexWrap: "wrap",
   alignItems: "center",
-  marginBottom: "50px",
+  marginBottom: "40px",
   gap: "0px",
   borderRadius: "20px",
   backgroundColor: "#3F3F3F",
@@ -33,7 +35,7 @@ export const QonnectFourScoreboard = styled(Box)({
   gap: "26px",
   width: "1078px",
   height: "77px",
-  marginBottom: "161px",
+  marginBottom: "110px",
 });
 
 export const QonnectFourPlayer = styled(Box)({
@@ -86,6 +88,15 @@ export const QonnectFourPlayerTimer = styled(Typography)(({ theme }) => ({
   backgroundColor: "#3F3F3F",
 }));
 
+export const QonnectFourHoverRow = styled(Box)({
+  position: "absolute",
+  top: "-60px",
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  justifyContent: "center",
+});
+
 export const QonnectFourRow = styled(Box)({
   display: "flex",
   flexDirection: "row",
@@ -94,15 +105,19 @@ export const QonnectFourRow = styled(Box)({
   "&:not(:last-child)": {
     marginBottom: "15px",
   },
+  "&.hover-row:hover .floatingPiece": {
+    transform: " translateY(10px)",
+  },
 });
 
 export const QonnectFourCell = styled(Box)<PieceColors>(
-  ({ player, isWinningCell }) => ({
+  ({ player, isWinningCell, winner }) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     width: "77px",
     height: "77px",
+    // animation: !isWinningCell ? `${keyframes(dropAnimation)} 0.5s` : "none",
     background:
       player === "R"
         ? "#F29999"
@@ -127,12 +142,16 @@ export const QonnectFourCell = styled(Box)<PieceColors>(
         ? "0px 0px 23.1px 6px #46739C"
         : "none",
     "&:hover": {
-      cursor: "pointer",
+      cursor: winner ? "auto" : "pointer",
+    },
+    "&.floatingPiece": {
+      transition: "transform 0.3s ease-in-out, opacity 0.3s ease-in-out",
+      transform: winner ? "none" : "translateY(5px)",
     },
   })
 );
 
-export const WinnnerRow = styled(Box)({
+export const WinnerRow = styled(Box)({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -165,3 +184,26 @@ export const ResetButton = styled(Button)(({ theme }) => ({
     backgroundColor: "#023592",
   },
 }));
+
+export const AnimatedPiece = styled(Box)<AnimationInfo>(
+  ({ player, dropHeight }) => {
+    const baseHeight = 100; // base height in pixels
+    const baseDuration = 0.11; // base duration in seconds for the base height
+    const duration = (dropHeight / baseHeight) * baseDuration; // scale duration based on drop height
+    return {
+      position: "absolute",
+      zIndex: 1,
+      width: "77px",
+      height: "77px",
+      borderRadius: "50%",
+      backgroundColor: player === "R" ? "#F29999" : "#70BAFF",
+      transform: `translateY(${dropHeight}px)`,
+      animation: `dropPiece ${duration}s linear forwards`,
+      // Define the keyframes within the same context
+      "@keyframes dropPiece": {
+        "0%": { transform: "translateY(0)" },
+        "100%": { transform: `translateY(${dropHeight}px)` },
+      },
+    };
+  }
+);
